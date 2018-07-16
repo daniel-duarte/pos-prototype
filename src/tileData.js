@@ -1,29 +1,29 @@
 const tileData = [
   {
-    img: '/Canon_FT_alvesgaspar_new.jpg',
+    img: '/images/comp1.jpg',
     title: 'Breakfast',
     author: 'jill111',
     cols: 2,
     featured: true,
   },
   {
-    img: '/Canon_FT_alvesgaspar_new.jpg',
+    img: '/images/comp2.jpg',
     title: 'Tasty burger',
     author: 'director90',
   },
   {
-    img: '/Canon_FT_alvesgaspar_new.jpg',
+    img: '/images/comp3.jpg',
     title: 'Camera',
     author: 'Danson67',
   },
   {
-    img: '/Canon_FT_alvesgaspar_new.jpg',
+    img: '/images/comp4.jpg',
     title: 'Morning',
     author: 'fancycrave1',
     featured: true,
   },
   {
-    img: '/Canon_FT_alvesgaspar_new.jpg',
+    img: '/images/comp5.jpg',
     title: 'Hats',
     author: 'Hans',
   },

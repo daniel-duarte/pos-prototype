@@ -13,23 +13,28 @@ import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
+import MenuList from '@material-ui/core/MenuList';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
-import InboxIcon from '@material-ui/icons/Inbox';
+import DeleteIcon from '@material-ui/icons/Delete';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import InfoIcon from '@material-ui/icons/Info';
+import ChevronRight from '@material-ui/icons/ChevronRight';
 import tileData from './tileData';
 
 const styles = theme => ({
@@ -46,13 +51,34 @@ const styles = theme => ({
         marginRight: 20,
     },
 
+    search: {
+        '&:before': {
+            borderBottom: '1px solid rgba(255, 255, 255, 0.42)'
+        },
+    },
 
-    // List (cart)
+    // Cart
     list_root: {
         width: '100%',
         maxWidth: 360,
-        backgroundColor: theme.palette.background.paper,
+        // backgroundColor: theme.palette.background.paper,
+        backgroundColor: '#dedede',
         height: '100%',
+        position: 'relative',
+    },
+
+    cartProductImage: {
+        borderRadius: 0
+    },
+
+    payButtonContainer: {
+        position: 'absolute',
+        bottom: 0,
+    },
+
+    payButton: {
+        width: '100%',
+        margin: '1em',
     },
 
 
@@ -73,19 +99,142 @@ const styles = theme => ({
     products_root: {
         display: 'flex',
         flexWrap: 'wrap',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         overflow: 'hidden',
-        backgroundColor: theme.palette.background.paper,
+        // backgroundColor: theme.palette.background.paper,
     },
     products_gridList: {
         // width: 500,
-        height: 600,
+        height: 'calc(100% - 37px)',
     },
     products_icon: {
-        color: 'rgba(255, 255, 255, 0.54)',
+        // color: 'rgba(255, 255, 255, 0.54)',
     },
+    product: {
+         border: '1px solid lightgray'
+    },
+    productImage: {
+        width: '90%',
+        height: 'auto',
+    },
+
+    // Bar buttons
+    category_button: {
+        //margin: theme.spacing.unit,
+    },
+
+    breadcrumb_button: {
+        minWidth: 0,
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+
+    breadcrumbs: {
+        marginLeft: 10
+    },
+
+    breadcrumb_separator: {
+        position: 'relative',
+        top: 7
+    }
 });
 
+class ProductGrid extends Component {
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <GridList className={classes.products_gridList} cols="4">
+                {/*<GridListTile key="Subheader" cols="4" style={{ height: 'auto' }}>*/}
+                {/*<ListSubheader component="div">Cameras</ListSubheader>*/}
+                {/*</GridListTile>*/}
+                {[...tileData, ...tileData].map(tile => (
+                    <GridListTile key={tile.img} cols="1" className={classes.product} >
+                        <Avatar src={tile.img} alt={tile.title} className={classes.productImage} />
+                        <GridListTileBar
+                            title={tile.title}
+                            subtitle={<span>by: {tile.author}</span>}
+                            actionIcon={
+                                <IconButton className={classes.products_icon}>
+                                    <InfoIcon />
+                                </IconButton>
+                            }
+                        />
+                    </GridListTile>
+                ))}
+            </GridList>
+        );
+    }
+}
+
+class Cart extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            items: [
+                { title: 'Kodak AF7',          price:  '$120.95' },
+                { title: 'Samsung Lens 0.8',   price:  '$210.00' },
+                { title: 'Canon Reflex Ultra', price: '$1210.20' },
+                { title: 'Lens Combo X2',      price:   '$20.50' },
+            ],
+            totals: [
+                { title: 'Subtotal', value:  '$2050.95' },
+                { title: 'Discount', value:  '-$10.00' },
+                { title: 'Total',    value: '$2040.95', isGrandTotal: true },
+            ],
+        };
+    }
+
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <div className={classes.list_root}>
+                <List component="nav">{
+                    this.state.items.map((item) => {
+
+                        return (
+                            <ListItem button divider dense>
+                                <Avatar alt="Remy Sharp" src="/images/comp3.jpg" className={classes.cartProductImage} />
+                                <ListItemText primary={item.title} secondary={item.price} />
+                                <ListItemSecondaryAction>
+                                    <IconButton aria-label="Delete"><DeleteIcon /></IconButton>
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        );
+
+                    })}
+                </List>
+                <List>{
+                    this.state.totals.map((item) => {
+
+                        let divider = item.isGrandTotal ? <Divider /> : '';
+
+                        return (
+                            <div>
+                                {divider}
+                                <ListItem dense={!item.isGrandTotal} >
+                                    <ListItemText primary={item.title} />
+                                    <ListItemSecondaryAction>
+                                        <ListItemText primary={item.value} />
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            </div>
+                        );
+
+                    })}
+                </List>
+
+                <Grid container justify="center" alignContent="stretch" className={classes.payButtonContainer}>
+                    <Button variant="contained" color="primary" className={classes.payButton}>Pay</Button>
+                </Grid>
+
+            </div>
+        );
+    }
+}
 
 class App extends Component {
     state = {
@@ -115,10 +264,12 @@ class App extends Component {
                             </IconButton>
                             <Typography variant="title" color="inherit" className={classes.appbar_flex}>POS</Typography>
                             <div>
-                                <TextField/>
-                                <IconButton>
-                                    <SearchIcon />
-                                </IconButton>
+                                {/*<Typography variant="title" color="inherit" className={classes.appbar_flex}>*/}
+                                    <Input className={classes.search}/>
+                                    <IconButton color="inherit">
+                                        <SearchIcon />
+                                    </IconButton>
+                                {/*</Typography>*/}
                                 <IconButton
                                     aria-owns={open ? 'menu-appbar' : null}
                                     aria-haspopup="true"
@@ -128,19 +279,20 @@ class App extends Component {
                                     <AccountCircle />
                                 </IconButton>
                                 <Menu
-                                    id="menu-appbar"
+                                    // id="menu-appbar"
                                     anchorEl={anchorEl}
                                     anchorOrigin={{
                                         vertical: 'top',
                                         horizontal: 'right',
                                     }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
+                                    // transformOrigin={{
+                                    //     vertical: 'top',
+                                    //     horizontal: 'right',
+                                    // }}
                                     open={open}
                                     onClose={this.handleClose}
                                 >
+
                                     <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
                                     <MenuItem onClick={this.handleClose}>Logout</MenuItem>
                                 </Menu>
@@ -149,13 +301,13 @@ class App extends Component {
                     </AppBar>
                 </div>
 
-                <Toolbar>
+                {/*<Toolbar>*/}
 
-                    <Typography variant="title" color="inherit" className={classes.appbar_flex}>
-                        Television | Home Teathers | Audio | Game
-                    </Typography>
+                    {/*<Typography variant="title" color="inherit" className={classes.appbar_flex}>*/}
+                        {/*Television | Home Teathers | Audio | Game*/}
+                    {/*</Typography>*/}
 
-                </Toolbar>
+                {/*</Toolbar>*/}
 
                 <div className="main-content">
                     <div className={classes.grid_root}>
@@ -163,81 +315,44 @@ class App extends Component {
                             <Grid item xs>
 
                                 <div className={classes.products_root}>
-                                    {/*<Typography variant="title" color="inherit" className={classes.appbar_flex}>All > Cameras</Typography>*/}
+
+                                    <div className={classes.breadcrumbs}>
+                                        <Button color="default" className={classes.breadcrumb_button}>
+                                            All
+                                        </Button>
+                                        <span>
+                                            <ChevronRight className={classes.breadcrumb_separator} />
+                                        </span>
+                                        <Button color="default" className={classes.breadcrumb_button}>
+                                            Cameras
+                                        </Button>
+                                    </div>
+
                                     <div>
-                                        <Button color="primary" className={classes.button}>
+                                        <Button color="primary" className={classes.category_button}>
                                             Reflex
                                         </Button>
-                                        <Button color="primary" className={classes.button}>
+                                        <Button color="primary" className={classes.category_button}>
                                             Compacts
                                         </Button>
-                                        <Button color="primary" className={classes.button}>
+                                        <Button color="primary" className={classes.category_button}>
                                             Lens
                                         </Button>
                                     </div>
 
-                                    <GridList className={classes.products_gridList} cols="4">
-                                        <GridListTile key="Subheader" cols="4" style={{ height: 'auto' }}>
-                                            <ListSubheader component="div">Cameras</ListSubheader>
-                                        </GridListTile>
-                                        {[...tileData, ...tileData].map(tile => (
-                                            <GridListTile key={tile.img} cols="1" >
-                                                <img src={tile.img} alt={tile.title} />
-                                                <GridListTileBar
-                                                    title={tile.title}
-                                                    subtitle={<span>by: {tile.author}</span>}
-                                                    actionIcon={
-                                                        <IconButton className={classes.products_icon}>
-                                                            <InfoIcon />
-                                                        </IconButton>
-                                                    }
-                                                />
-                                            </GridListTile>
-                                        ))}
-                                    </GridList>
                                 </div>
-
-
-
-
-
+                                    <ProductGrid classes={classes}/>
 
                             </Grid>
+
                             <Grid item xs={3}>
 
-                                <div className={classes.list_root}>
-                                    <List component="nav">
-                                        <ListItem button>
-                                            <ListItemIcon>
-                                                <PhotoCamera />
-                                            </ListItemIcon>
-                                            <ListItemText primary="Canon GTX 2" />
-                                        </ListItem>
-                                        <ListItem button>
-                                            <ListItemIcon>
-                                                <PhotoCamera />
-                                            </ListItemIcon>
-                                            <ListItemText primary="Kodak PM" />
-                                        </ListItem>
-                                    </List>
-                                    <Divider />
-                                    <List component="nav">
-                                        <ListItem button>
-                                            <ListItemText primary="Discount:  -$10.00" />
-                                        </ListItem>
-                                        <ListItem button component="a" href="#simple-list">
-                                            <ListItemText primary="Total:  $95.50" />
-                                        </ListItem>
-                                    </List>
-                                </div>
+                                <Cart classes={classes}/>
 
                             </Grid>
                         </Grid>
                     </div>
                 </div>
-
-
-
             </div>
         );
     }
