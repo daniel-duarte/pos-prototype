@@ -43,9 +43,11 @@ const styles = theme => ({
     appbar_root: {
         flexGrow: 1,
     },
+
     appbar_flex: {
         flex: 1,
     },
+
     appbar_menuButton: {
         marginLeft: -12,
         marginRight: 20,
@@ -89,8 +91,8 @@ const styles = theme => ({
     },
     grid_paper: {
        // padding: theme.spacing.unit * 2,
-       //  textAlign: 'center',
-       //  color: theme.palette.text.secondary,
+       // textAlign: 'center',
+       // color: theme.palette.text.secondary,
         height: '100%',
     },
 
@@ -136,8 +138,79 @@ const styles = theme => ({
     breadcrumb_separator: {
         position: 'relative',
         top: 7
-    }
+    },
+
+    // Customer
+
+    customerGrid: {
+        border: '1px solid blue'
+    },
 });
+
+
+class MainBar extends Component {
+
+    state = {
+        anchorEl: null,
+    };
+
+    handleMenu = event => {
+        this.setState({ anchorEl: event.currentTarget });
+    };
+
+    handleClose = () => {
+        this.setState({ anchorEl: null });
+    };
+
+    render() {
+        const { classes } = this.props;
+        const { anchorEl } = this.state;
+        const open = Boolean(anchorEl);
+
+        return (
+            <AppBar position="static" className={classes.appbar_root}>
+                <Toolbar>
+                    <IconButton className={classes.appbar_menuButton} color="inherit" aria-label="Menu">
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="title" color="inherit" className={classes.appbar_flex}>POS</Typography>
+                    <div>
+                        <Input className={classes.search}/>
+                        <IconButton color="inherit">
+                            <SearchIcon />
+                        </IconButton>
+                        <IconButton
+                            aria-owns={open ? 'menu-appbar' : null}
+                            aria-haspopup="true"
+                            onClick={this.handleMenu}
+                            color="inherit"
+                        >
+                            <AccountCircle />
+                        </IconButton>
+                        <Menu
+                            // id="menu-appbar"
+                            anchorEl={anchorEl}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            // transformOrigin={{
+                            //     vertical: 'top',
+                            //     horizontal: 'right',
+                            // }}
+                            open={open}
+                            onClose={this.handleClose}
+                        >
+
+                            <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
+                            <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                        </Menu>
+                    </div>
+                </Toolbar>
+            </AppBar>
+        );
+    }
+}
 
 class ProductGrid extends Component {
     render() {
@@ -145,12 +218,9 @@ class ProductGrid extends Component {
 
         return (
             <GridList className={classes.products_gridList} cols="4">
-                {/*<GridListTile key="Subheader" cols="4" style={{ height: 'auto' }}>*/}
-                {/*<ListSubheader component="div">Cameras</ListSubheader>*/}
-                {/*</GridListTile>*/}
                 {[...tileData, ...tileData].map(tile => (
                     <GridListTile key={tile.img} cols="1" className={classes.product} >
-                        <Avatar src={tile.img} alt={tile.title} className={classes.productImage} />
+                        <img src={tile.img} alt={tile.title} className={classes.productImage} />
                         <GridListTileBar
                             title={tile.title}
                             subtitle={<span>by: {tile.author}</span>}
@@ -163,6 +233,42 @@ class ProductGrid extends Component {
                     </GridListTile>
                 ))}
             </GridList>
+        );
+    }
+}
+
+class ProductGridBar extends Component {
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <div className={classes.products_root}>
+
+                <div className={classes.breadcrumbs}>
+                    <Button color="default" className={classes.breadcrumb_button}>
+                        All
+                    </Button>
+                    <span>
+                                            <ChevronRight className={classes.breadcrumb_separator} />
+                                        </span>
+                    <Button color="default" className={classes.breadcrumb_button}>
+                        Cameras
+                    </Button>
+                </div>
+
+                <div>
+                    <Button color="primary" className={classes.category_button}>
+                        Reflex
+                    </Button>
+                    <Button color="primary" className={classes.category_button}>
+                        Compacts
+                    </Button>
+                    <Button color="primary" className={classes.category_button}>
+                        Lens
+                    </Button>
+                </div>
+
+            </div>
         );
     }
 }
@@ -228,7 +334,12 @@ class Cart extends Component {
                 </List>
 
                 <Grid container justify="center" alignContent="stretch" className={classes.payButtonContainer}>
-                    <Button variant="contained" color="primary" className={classes.payButton}>Pay</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.payButton}
+                        onClick={this.props.checkoutHandler}
+                    >Pay</Button>
                 </Grid>
 
             </div>
@@ -236,127 +347,86 @@ class Cart extends Component {
     }
 }
 
-class App extends Component {
-    state = {
-        anchorEl: null,
-    };
-
-    handleMenu = event => {
-        this.setState({ anchorEl: event.currentTarget });
-    };
-
-    handleClose = () => {
-        this.setState({ anchorEl: null });
-    };
+class Catalog extends Component {
 
     render() {
         const { classes } = this.props;
-        const { anchorEl } = this.state;
-        const open = Boolean(anchorEl);
+
+        return (
+            <div className={classes.grid_root}>
+                <Grid container spacing="8" alignItems="stretch">
+                    <Grid item xs>
+                        <ProductGridBar classes={classes}/>
+                        <ProductGrid classes={classes}/>
+                    </Grid>
+
+                    <Grid item xs="3">
+                        <Cart classes={classes} checkoutHandler={() => this.props.checkoutHandler()}/>
+                    </Grid>
+                </Grid>
+            </div>
+        );
+    }
+}
+
+class Customer extends Component {
+
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <div className={classes.grid_root}>
+                <Grid container spacing="8" alignItems="stretch">
+                    <Grid item xs className={classes.customerGrid}>Select Customer</Grid>
+                    <Grid item xs className={classes.customerGrid}>New Customer</Grid>
+                </Grid>
+            </div>
+        );
+    }
+}
+
+class App extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            page: 'catalog'
+        }
+    }
+
+    goTo(page) {
+        this.setState({page: page});
+    }
+
+    renderComponent() {
+        const { classes } = this.props;
+
+        switch (this.state.page) {
+            case 'catalog':
+                return <Catalog classes={classes} checkoutHandler={() => this.goTo('customer')}/>;
+            case 'customer':
+                return <Customer classes={classes}/>;
+        }
+
+        return 'no page';
+    }
+
+    render() {
+        const { classes } = this.props;
 
         return (
             <div>
-                <div className={classes.appbar_root}>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <IconButton className={classes.appbar_menuButton} color="inherit" aria-label="Menu">
-                                <MenuIcon />
-                            </IconButton>
-                            <Typography variant="title" color="inherit" className={classes.appbar_flex}>POS</Typography>
-                            <div>
-                                {/*<Typography variant="title" color="inherit" className={classes.appbar_flex}>*/}
-                                    <Input className={classes.search}/>
-                                    <IconButton color="inherit">
-                                        <SearchIcon />
-                                    </IconButton>
-                                {/*</Typography>*/}
-                                <IconButton
-                                    aria-owns={open ? 'menu-appbar' : null}
-                                    aria-haspopup="true"
-                                    onClick={this.handleMenu}
-                                    color="inherit"
-                                >
-                                    <AccountCircle />
-                                </IconButton>
-                                <Menu
-                                    // id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    // transformOrigin={{
-                                    //     vertical: 'top',
-                                    //     horizontal: 'right',
-                                    // }}
-                                    open={open}
-                                    onClose={this.handleClose}
-                                >
-
-                                    <MenuItem onClick={this.handleClose}>My Profile</MenuItem>
-                                    <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-                                </Menu>
-                            </div>
-                        </Toolbar>
-                    </AppBar>
-                </div>
-
-                {/*<Toolbar>*/}
-
-                    {/*<Typography variant="title" color="inherit" className={classes.appbar_flex}>*/}
-                        {/*Television | Home Teathers | Audio | Game*/}
-                    {/*</Typography>*/}
-
-                {/*</Toolbar>*/}
+                <MainBar classes={classes}/>
 
                 <div className="main-content">
-                    <div className={classes.grid_root}>
-                        <Grid container spacing={8} alignItems="stretch">
-                            <Grid item xs>
-
-                                <div className={classes.products_root}>
-
-                                    <div className={classes.breadcrumbs}>
-                                        <Button color="default" className={classes.breadcrumb_button}>
-                                            All
-                                        </Button>
-                                        <span>
-                                            <ChevronRight className={classes.breadcrumb_separator} />
-                                        </span>
-                                        <Button color="default" className={classes.breadcrumb_button}>
-                                            Cameras
-                                        </Button>
-                                    </div>
-
-                                    <div>
-                                        <Button color="primary" className={classes.category_button}>
-                                            Reflex
-                                        </Button>
-                                        <Button color="primary" className={classes.category_button}>
-                                            Compacts
-                                        </Button>
-                                        <Button color="primary" className={classes.category_button}>
-                                            Lens
-                                        </Button>
-                                    </div>
-
-                                </div>
-                                    <ProductGrid classes={classes}/>
-
-                            </Grid>
-
-                            <Grid item xs={3}>
-
-                                <Cart classes={classes}/>
-
-                            </Grid>
-                        </Grid>
-                    </div>
+                    {this.renderComponent()}
                 </div>
             </div>
         );
     }
 }
+
 
 App.propTypes = {
     classes: PropTypes.object.isRequired,
