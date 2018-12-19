@@ -12,6 +12,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Avatar from '@material-ui/core/Avatar';
@@ -55,7 +56,7 @@ const styles = theme => ({
 
     search: {
         '&:before': {
-            borderBottom: '1px solid rgba(255, 255, 255, 0.42)'
+            borderBottomColor: 'rgba(255, 255, 255, 0.42)'
         },
     },
 
@@ -82,7 +83,6 @@ const styles = theme => ({
         width: '100%',
         margin: '1em',
     },
-
 
     // Layout Grid
     grid_root: {
@@ -143,10 +143,45 @@ const styles = theme => ({
     // Customer
 
     customerGrid: {
-        border: '1px solid blue'
+        // outline: '3px solid orange'
+        position: 'relative'
+    },
+
+    customerList: {
+       // maxWidth: '30em',
+    },
+
+    input: {
+        margin: '1em',
+    },
+
+    customerSection: {
+        margin: '0.5em',
+        height: 'calc(100% - 2.5em)',
+        padding: '1em',
+        position: 'relative',
+    },
+
+    saveCustomerButtonContainer: {
+        position: 'absolute',
+        bottom: '1em',
     },
 });
 
+class SearchBox extends Component {
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <span>
+                <Input className={this.props.className}/>
+                <IconButton color="inherit">
+                    <SearchIcon />
+                </IconButton>
+            </span>
+        );
+    }
+}
 
 class MainBar extends Component {
 
@@ -175,10 +210,7 @@ class MainBar extends Component {
                     </IconButton>
                     <Typography variant="title" color="inherit" className={classes.appbar_flex}>POS</Typography>
                     <div>
-                        <Input className={classes.search}/>
-                        <IconButton color="inherit">
-                            <SearchIcon />
-                        </IconButton>
+                        <SearchBox className={classes.search}/>
                         <IconButton
                             aria-owns={open ? 'menu-appbar' : null}
                             aria-haspopup="true"
@@ -249,8 +281,8 @@ class ProductGridBar extends Component {
                         All
                     </Button>
                     <span>
-                                            <ChevronRight className={classes.breadcrumb_separator} />
-                                        </span>
+                        <ChevronRight className={classes.breadcrumb_separator} />
+                    </span>
                     <Button color="default" className={classes.breadcrumb_button}>
                         Cameras
                     </Button>
@@ -354,7 +386,7 @@ class Catalog extends Component {
 
         return (
             <div className={classes.grid_root}>
-                <Grid container spacing="8" alignItems="stretch">
+                <Grid container spacing={8} alignItems="stretch">
                     <Grid item xs>
                         <ProductGridBar classes={classes}/>
                         <ProductGrid classes={classes}/>
@@ -376,9 +408,56 @@ class Customer extends Component {
 
         return (
             <div className={classes.grid_root}>
-                <Grid container spacing="8" alignItems="stretch">
-                    <Grid item xs className={classes.customerGrid}>Select Customer</Grid>
-                    <Grid item xs className={classes.customerGrid}>New Customer</Grid>
+                <Grid container spacing={8} alignItems="stretch" justify="center">
+                    <Grid item xs className={classes.customerGrid}>
+                        {/*<Paper className={classes.customerSection}>*/}
+
+                            <Grid container wrap="nowrap" direction="column" justify="flex-start" alignItems="stretch" style={{border:'1px solid red', position:'absolute', bottom:0, top:0}}>
+                                <Grid container justify="center" direction="column" style={{border:'1px solid blue'}}>
+                                    <Typography variant="headline" align="center">Select Customer</Typography>
+                                </Grid>
+
+                                <Grid container justify="center" direction="column" style={{border:'1px solid blue'}}>
+                                    <SearchBox/>
+                                </Grid>
+
+                                <Grid container justify="center" direction="column" alignItems="stretch" style={{border:'1px solid blue', flex: 1}}>
+                                    <List className={classes.customerList} style={{/*height: 'calc(100% - 5.5em)',*/ overflow: 'auto'}}>
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(value => (
+                                            <ListItem key={value} dense button divider className={classes.listItem}>
+                                                <Avatar alt="Customer Avatar" src="/images/avatar.jpg" />
+                                                <ListItemText primary={`John Doe ${value}`} />
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </Grid>
+                            </Grid>
+
+                        {/*</Paper>*/}
+                    </Grid>
+
+                    <Grid item xs className={classes.customerGrid}>
+                        <Paper className={classes.customerSection}>
+                            <Typography variant="headline" align="center">New Customer</Typography>
+
+                            <FormControl fullWidth><TextField className={classes.input} label="First Name"/></FormControl>
+                            <FormControl fullWidth><TextField className={classes.input} label="Last Name"/></FormControl>
+                            <FormControl fullWidth><TextField className={classes.input} label="Email"/></FormControl>
+
+                            <FormControl fullWidth>
+                                <TextField className={classes.input} label="Street" helperText="First line"/>
+                                <TextField className={classes.input} helperText="Second line"/>
+                            </FormControl>
+
+                            <Grid container justify="center" alignContent="stretch" className={classes.saveCustomerButtonContainer}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    // className={classes.payButton}
+                                >Save & Continue</Button>
+                            </Grid>
+                        </Paper>
+                    </Grid>
                 </Grid>
             </div>
         );
@@ -391,7 +470,7 @@ class App extends Component {
         super(props);
 
         this.state = {
-            page: 'catalog'
+            page: 'customer'
         }
     }
 
